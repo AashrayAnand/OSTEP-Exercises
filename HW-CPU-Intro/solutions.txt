@@ -1,0 +1,19 @@
+1. Since neither of the processes use I/O (use CPU for 100% of instructions), the CPU
+will be in use 100% of the time.
+
+2. Since the second process will be blocked by its I/O operation, and the first process executes
+4 CPU instructions, the time to complete both processes will be 4 clock cycles + the time it
+takes to complete the blocking I/O operation (5 cycles), plus a last cycle when both are done. This is because the second processs will be in a ready state until the first process is complete, and thus, the CPU is left doing nothing while the second process is blocked, resulting in it taking 10 cycles to complete both processes.
+
+3. Since the process with the I/O operation is now executed first, the result is that it is blocked for an I/O operation while the second process simultaneously executes all four of its sinstructions, meaning the time to complete both processes is cut down from 10 cycles to 6.
+
+4. Since the system will now wait until the first process is complete to switch to the second process, the CPU will be left idle while the first process is blocked, meaning that it will take 10 cycles to complete the processes.
+
+5. The system will now switch on the I/O operation executed by the first process, meaning the CPU will be executing the second process while the first is blocked, and we are back to completing the processes in 6 cycles.
+
+6. No, since we wait on returning to the process which executed the I/O, all of the processes which utilize the CPU are completed before we ever return, and since the process which executed the I/O has multiple more I/O instructions to execute, there is a long period of time after the other processes are completed where the CPU is left idle.
+
+7. Yes, since we return to the process executing I/O instructions immediately now, we continually block the processs, and complete the other processes while it is blocked, thus avoiding the idle CPU time we saw before.
+
+8. SWITCH_ON_IO is best when the ready process has upcoming CPU instructions to execute, which will result in the CPU remaining idle less often. SWITCH_ON_END is unlikely to be effective unlesss the majority of the instructions across both processe are CPU instructions, as this will mean that the CPU is idle every time either process executes an I/O. IO_RUN_IMMEDIATE is good when a process is continually issuing I/Os, as we can continuously block it and allow the other process to
+utilize the CPU. IO_RUN_LATER is good when the processes have many I/O operations which would overlap clock cycles to save time.
